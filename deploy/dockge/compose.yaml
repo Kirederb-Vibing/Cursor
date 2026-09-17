@@ -1,9 +1,7 @@
-# Fælleskassen — Dockge-stack (GHCR-image)
+# Fælleskassen — Dockge + Pangolin
 #
-# 1. Ny stack i Dockge, navn: faelleskassen
-# 2. Indsæt denne fil som compose
-# 3. Indsæt .env i Env-fanen
-# 4. Deploy (trækker ghcr.io/kirederb-vibing/cursor:latest)
+# Ingen værts-porte. Containeren sidder på det eksterne netværk `proxy`.
+# I Pangolin: HTTP-resource → http://faelleskassen:8080
 
 services:
   faelleskassen:
@@ -11,17 +9,19 @@ services:
     image: ${IMAGE:-ghcr.io/kirederb-vibing/cursor:latest}
     pull_policy: always
     restart: unless-stopped
-    ports:
-      - "${PORT:-8080}:8080"
+    expose:
+      - "8080"
     environment:
       DATA_DIR: /data
       TZ: ${TZ:-Europe/Copenhagen}
       API_KEY: ${API_KEY}
       APP_PASSWORD: ${APP_PASSWORD:-}
       SEED_DEMO: ${SEED_DEMO:-true}
-      PUBLIC_URL: ${PUBLIC_URL:-http://localhost:8080}
+      PUBLIC_URL: ${PUBLIC_URL:-http://faelleskassen:8080}
     volumes:
       - data:/data
+    networks:
+      - proxy
     healthcheck:
       test:
         [
@@ -37,3 +37,8 @@ services:
 
 volumes:
   data:
+
+networks:
+  proxy:
+    external: true
+    name: ${PROXY_NETWORK:-proxy}
