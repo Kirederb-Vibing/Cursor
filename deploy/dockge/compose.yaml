@@ -1,6 +1,7 @@
 # Fælleskassen — Dockge + Pangolin
 #
 # Ingen værts-porte. Containeren sidder på det eksterne netværk `proxy`.
+# SQLite: ./data i stack-mappen (ikke et Docker named volume).
 # I Pangolin: HTTP-resource → http://faelleskassen:8080
 
 services:
@@ -18,7 +19,7 @@ services:
       SEED_DEMO: ${SEED_DEMO:-false}
       PUBLIC_URL: ${PUBLIC_URL:-http://faelleskassen:8080}
     volumes:
-      - data:/data
+      - ./data:/data
     networks:
       - proxy
     healthcheck:
@@ -33,9 +34,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 20s
-
-volumes:
-  data:
 
 networks:
   proxy:

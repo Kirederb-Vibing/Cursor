@@ -9,6 +9,8 @@ Kopiér `compose.yaml` og `.env` ind i en ny Dockge-stack ved navn **faelleskass
 5. Ret `PUBLIC_URL` til dit Pangolin-domæne
 6. **Deploy**
 
+SQLite ligger i stack-mappen som `data/` (bind-mount `./data:/data`), ved siden af `compose.yaml` — ikke i Docker-volumes. Slet `data/` i stacken for en frisk start.
+
 Stacken åbner **ingen porte** på værten. Den slutter sig til det eksisterende Docker-netværk `proxy` (sæt `PROXY_NETWORK` hvis det hedder noget andet).
 
 I Pangolin:
