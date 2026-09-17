@@ -40,6 +40,8 @@ Valgfrie miljøvariabler:
 | `API_KEY` | Fast API-nøgle (ellers oprettes en og vises under Indstillinger) |
 | `SEED_DEMO` | `true` indlæser eksempelhusstand (standard er tom start + opsætningsguide) |
 | `DATA_DIR` | Standard `/data` i containeren |
+| `PUID` / `PGID` | Unix-bruger/gruppe der ejer bind-mountet `/data` (standard 1000) |
+| `DATA_PATH` | Værtssti der mountes til `/data` i Dockge (absolut, fx `/home/fkl/faelleskassen/data`) |
 
 ## Hvad v1 kan
 

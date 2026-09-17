@@ -9,7 +9,11 @@ Kopiér `compose.yaml` og `.env` ind i en ny Dockge-stack ved navn **faelleskass
 5. Ret `PUBLIC_URL` til dit Pangolin-domæne
 6. **Deploy**
 
-SQLite ligger i stack-mappen som `data/` (bind-mount `./data:/data`), ved siden af `compose.yaml` — ikke i Docker-volumes. Slet `data/` i stacken for en frisk start.
+SQLite ligger på værten i `DATA_PATH` (standard `/home/fkl/faelleskassen/data`) og mountes ind som `/data`. Brug en **absolut** sti — relative `./data` i Dockge rammer ofte forkert.
+
+Containeren starter som root, retter ejerskab på `/data` til `PUID`/`PGID` (standard 1000) og kører appen som den bruger. Ellers kan Docker have oprettet mappen som root, og skrivning til `.session_secret` / SQLite fejler.
+
+Slet filerne i `DATA_PATH` for en frisk start.
 
 Stacken åbner **ingen porte** på værten. Den slutter sig til det eksisterende Docker-netværk `proxy` (sæt `PROXY_NETWORK` hvis det hedder noget andet).
 

@@ -9,6 +9,8 @@ services:
     environment:
       DATA_DIR: /data
       TZ: ${TZ:-Europe/Copenhagen}
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
       API_KEY: ${API_KEY:-}
       SEED_DEMO: ${SEED_DEMO:-false}
       PUBLIC_URL: ${PUBLIC_URL:-http://localhost:8080}
