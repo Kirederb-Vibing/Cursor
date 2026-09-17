@@ -12,7 +12,8 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8080
     public_url: str = ""
-    seed_demo: bool = True
+    seed_demo: bool = False
+    session_secret: str = ""
 
 
 settings = Settings()

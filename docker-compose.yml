@@ -11,7 +11,7 @@ services:
       TZ: ${TZ:-Europe/Copenhagen}
       API_KEY: ${API_KEY:-}
       APP_PASSWORD: ${APP_PASSWORD:-}
-      SEED_DEMO: ${SEED_DEMO:-true}
+      SEED_DEMO: ${SEED_DEMO:-false}
       PUBLIC_URL: ${PUBLIC_URL:-http://localhost:8080}
     volumes:
       - faelleskassen-data:/data

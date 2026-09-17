@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log ind · Fælleskassen</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body class="setup-body">
+  <main class="setup narrow">
+    <p class="eyebrow">Fælleskassen</p>
+    <h1>Log ind</h1>
+    <p class="lede">Kun personer der er sat til at kunne logge ind, har en kode.</p>
+    {% if error %}<p class="alert">{{ error }}</p>{% endif %}
+    <form method="post" action="/login" class="stack card">
+      <label>Navn <input name="name" required autocomplete="username"></label>
+      <label>Kode <input type="password" name="password" required autocomplete="current-password"></label>
+      <button class="btn" type="submit">Log ind</button>
+    </form>
+  </main>
+</body>
+</html>

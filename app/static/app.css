@@ -121,6 +121,20 @@ input, select, textarea {
 .facts dt { color: var(--muted); font-size: .85rem; }
 .facts dd { margin: .15rem 0 0; font-size: 1.15rem; }
 .empty { color: var(--muted); }
+.who { display: flex; gap: .8rem; align-items: center; font-size: .95rem; }
+.who a { color: #f4ead8; }
+.alert { background: #f4e1d4; color: var(--bad); padding: .7rem 1rem; border-radius: .6rem; }
+.setup-body { display: grid; }
+.setup { width: min(760px, calc(100% - 2rem)); margin: 2rem auto 3rem; }
+.setup.narrow { width: min(440px, calc(100% - 2rem)); }
+.setup .step {
+  width: 1.8rem; height: 1.8rem; border-radius: 99px; background: var(--pine); color: #f4ead8;
+  display: grid; place-items: center; font-size: .85rem; margin: 0 0 .5rem;
+}
+.extra-person { border: 1px dashed var(--line); border-radius: .8rem; padding: .8rem; display: grid; gap: .6rem; }
+.tight { gap: .45rem; margin-top: .6rem; }
+.plain.people-list li { display: block; }
+.person-row { padding: .8rem 0; }
 
 @media (max-width: 800px) {
   .top, .hero, .grid-2 { display: grid; }

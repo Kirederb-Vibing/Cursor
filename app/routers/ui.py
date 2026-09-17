@@ -9,7 +9,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select
 
-from app.auth import current_api_key, require_ui
+from app.auth import current_api_key, current_user, is_admin, login_is_required, require_admin, require_ui
 from app.config import settings as env_settings
 from app.crud import create_account, create_person, delete_item, update_item, upsert_item, upsert_mortgage
 from app.database import get_engine
@@ -45,6 +45,7 @@ def get_session():
 def ctx(request: Request, session: Session, **extra):
     settings = ensure_settings(session)
     people = session.exec(select(Person).order_by(Person.name)).all()
+    user = current_user(request, session)
     payload = {
         "request": request,
         "settings": settings,
@@ -55,6 +56,8 @@ def ctx(request: Request, session: Session, **extra):
         "months": MONTHS_DA,
         "effective_api_key": current_api_key(),
         "api_key_from_env": bool(env_settings.api_key),
+        "current_user": user,
+        "is_admin": is_admin(user) or not login_is_required(session),
     }
     payload.update(extra)
     return payload
@@ -267,25 +270,77 @@ def personer(request: Request, session: Session = Depends(get_session)):
 
 @router.post("/personer")
 def gem_person(
+    request: Request,
     name: str = Form(),
     color: str = Form(default="#0f5c4c"),
     yearly_gross: str = Form(default=""),
     notes: str = Form(default=""),
+    can_login: str | None = Form(default=None),
+    password: str = Form(default=""),
     session: Session = Depends(get_session),
 ):
-    create_person(
-        session,
-        PersonIn(name=name, color=color, notes=notes, yearly_gross_ore=parse_dkk(yearly_gross)),
-    )
+    require_admin(request, session)
+    try:
+        create_person(
+            session,
+            PersonIn(
+                name=name,
+                color=color,
+                notes=notes,
+                yearly_gross_ore=parse_dkk(yearly_gross),
+                can_login=bool(can_login),
+                password=password or None,
+            ),
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return RedirectResponse("/personer", status_code=303)
+
+
+@router.post("/personer/{person_id}/kode")
+def gem_person_kode(
+    request: Request,
+    person_id: int,
+    can_login: str | None = Form(default=None),
+    password: str = Form(default=""),
+    session: Session = Depends(get_session),
+):
+    require_admin(request, session)
+    person = session.get(Person, person_id)
+    if not person:
+        raise HTTPException(404)
+    wants_login = bool(can_login) or person.role == "admin"
+    if wants_login:
+        if password:
+            if len(password) < 8:
+                raise HTTPException(400, "Koden skal være mindst 8 tegn")
+            from app.security import hash_password
+
+            person.password_hash = hash_password(password)
+        elif not person.password_hash:
+            raise HTTPException(400, "Der skal sættes en kode, når personen skal kunne logge ind")
+        person.can_login = True
+    else:
+        if person.role == "admin":
+            raise HTTPException(400, "Administratoren skal kunne logge ind")
+        person.can_login = False
+    session.add(person)
+    session.commit()
     return RedirectResponse("/personer", status_code=303)
 
 
 @router.post("/personer/{person_id}/slet")
-def slet_person(person_id: int, session: Session = Depends(get_session)):
+def slet_person(request: Request, person_id: int, session: Session = Depends(get_session)):
+    require_admin(request, session)
     person = session.get(Person, person_id)
-    if person:
-        session.delete(person)
-        session.commit()
+    if not person:
+        return RedirectResponse("/personer", status_code=303)
+    if person.role == "admin":
+        admins = [p for p in session.exec(select(Person)).all() if p.role == "admin"]
+        if len(admins) <= 1:
+            raise HTTPException(400, "Den sidste administrator kan ikke slettes")
+    session.delete(person)
+    session.commit()
     return RedirectResponse("/personer", status_code=303)
 
 
@@ -379,11 +434,13 @@ def slet_laan(mortgage_id: int, session: Session = Depends(get_session)):
 
 @router.get("/indstillinger")
 def indstillinger(request: Request, session: Session = Depends(get_session)):
+    require_admin(request, session)
     return render(request, session, "indstillinger.html")
 
 
 @router.post("/indstillinger")
 def gem_indstillinger(
+    request: Request,
     name: str = Form(),
     municipal_tax_pct: str = Form(),
     church_tax_pct: str = Form(default="0"),
@@ -391,6 +448,7 @@ def gem_indstillinger(
     is_couple: Optional[str] = Form(default=None),
     session: Session = Depends(get_session),
 ):
+    require_admin(request, session)
     settings = ensure_settings(session)
     settings.name = name.strip() or settings.name
     settings.municipal_tax_pct = float(municipal_tax_pct.replace(",", "."))
@@ -403,12 +461,14 @@ def gem_indstillinger(
 
 
 @router.post("/indstillinger/nogle")
-def ny_nogle(session: Session = Depends(get_session)):
+def ny_nogle(request: Request, session: Session = Depends(get_session)):
+    require_admin(request, session)
     rotate_api_key(session)
     return RedirectResponse("/indstillinger", status_code=303)
 
 
 @router.post("/indstillinger/demo")
-def indlaes_demo(session: Session = Depends(get_session)):
+def indlaes_demo(request: Request, session: Session = Depends(get_session)):
+    require_admin(request, session)
     seed_demo(session, force=True)
     return RedirectResponse("/", status_code=303)

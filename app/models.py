@@ -19,6 +19,7 @@ class HouseholdSettings(SQLModel, table=True):
     n8n_webhook_url: str = ""
     api_key: str = ""
     seeded: bool = False
+    onboarded: bool = False
     updated_at: datetime = Field(default_factory=_now)
 
 
@@ -28,6 +29,9 @@ class Person(SQLModel, table=True):
     color: str = "#0f5c4c"
     notes: str = ""
     yearly_gross_ore: int = 0
+    role: str = "member"
+    can_login: bool = False
+    password_hash: str = ""
     created_at: datetime = Field(default_factory=_now)
 
 

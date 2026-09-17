@@ -18,4 +18,8 @@ I Pangolin:
 - Destinationsport: `8080`
 - URL: `http://faelleskassen:8080`
 
-Testhusstanden indlæses automatisk (`SEED_DEMO=true`). API-nøgle til n8n / Home Assistant i test: `fk_test_n8n_ha_local`.
+Testhusstanden indlæses **ikke** automatisk. Første åbning viser opsætningsguiden, hvor den første person bliver administrator med kode. Andre kan tilføjes uden login.
+
+API-nøgle til n8n / Home Assistant sættes under Indstillinger efter login. `API_KEY` i `.env` kan stadig tvinge nøglen.
+
+`APP_PASSWORD` er tom. Person-login styres i opsætningen.

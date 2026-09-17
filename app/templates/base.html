@@ -21,8 +21,16 @@
       <a href="/personer" {% if request.url.path.startswith('/personer') %}class="on"{% endif %}>Personer</a>
       <a href="/konti" {% if request.url.path.startswith('/konti') %}class="on"{% endif %}>Konti</a>
       <a href="/skat" {% if request.url.path.startswith('/skat') %}class="on"{% endif %}>Skat</a>
+      {% if is_admin %}
       <a href="/indstillinger" {% if request.url.path.startswith('/indstillinger') %}class="on"{% endif %}>Indstillinger</a>
+      {% endif %}
     </nav>
+    {% if current_user %}
+    <div class="who">
+      <span>{{ current_user.name }}{% if is_admin %} · admin{% endif %}</span>
+      <a href="/logout">Log ud</a>
+    </div>
+    {% endif %}
   </header>
   <main>
     {% block body %}{% endblock %}

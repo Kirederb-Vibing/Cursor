@@ -18,6 +18,10 @@
   </div>
 </section>
 
+{% if not plan.occurrences %}
+<p class="empty">Husstanden er tom. Gå til <a href="/poster">Poster</a> og tilføj indkomst, abonnementer og overførsler.</p>
+{% endif %}
+
 <section class="kpis">
   <article>
     <span>Denne måned netto</span>

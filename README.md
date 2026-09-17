@@ -14,7 +14,7 @@ Det er et overblik over *det du har sagt vil ske* — ikke en bankforbindelse og
 docker compose up --build
 ```
 
-Åbn [http://localhost:8080](http://localhost:8080).
+Åbn [http://localhost:8080](http://localhost:8080). Første gang kommer du ind i opsætningsguiden: husstand, administrator med kode, og valgfrie øvrige personer (login-kode kun hvis de selv skal kunne gå ind).
 
 ### Dockge
 
@@ -39,7 +39,7 @@ Valgfrie miljøvariabler:
 | --- | --- |
 | `API_KEY` | Fast API-nøgle (ellers oprettes en og vises under Indstillinger) |
 | `APP_PASSWORD` | Sætter HTTP basic på UI |
-| `SEED_DEMO` | `true` indlæser eksempelhusstand første gang |
+| `SEED_DEMO` | `true` indlæser eksempelhusstand (standard er tom start + opsætningsguide) |
 | `DATA_DIR` | Standard `/data` i containeren |
 
 ## Hvad v1 kan

@@ -13,6 +13,7 @@ def client(tmp_path):
     settings.api_key = "test-key"
     settings.seed_demo = True
     settings.app_password = ""
+    settings.session_secret = "test-session-secret"
     reset_engine()
     from app.main import app
 

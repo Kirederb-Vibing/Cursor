@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Første opsætning · Fælleskassen</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body class="setup-body">
+  <main class="setup">
+    <p class="eyebrow">Velkommen</p>
+    <h1>Første opsætning</h1>
+    <p class="lede">
+      Du starter på en tom husstand. Guiden opretter administratoren først.
+      Andre i husstanden kan være med i overblikket uden login. Kode er kun
+      nødvendigt for dem, der selv skal kunne gå ind i Fælleskassen.
+    </p>
+    {% if error %}<p class="alert">{{ error }}</p>{% endif %}
+
+    <form method="post" action="/opsaetning" class="stack">
+      <section class="card">
+        <p class="step">1</p>
+        <h2>Husstanden</h2>
+        <p class="note">Navnet vises i toppen. Skattesatser kan ændres senere.</p>
+        <label>Husstandens navn <input name="household_name" required placeholder="Familien Jensen"></label>
+        <label class="check">
+          <input type="checkbox" name="is_couple" value="1" checked>
+          Par / ægtefæller (100.000 kr. loft for rentefradrag)
+        </label>
+        <div class="row">
+          <label>Kommuneskat % <input name="municipal_tax_pct" value="25.05"></label>
+          <label>Kirkeskat % <input name="church_tax_pct" value="0"></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <p class="step">2</p>
+        <h2>Dig — administrator</h2>
+        <p class="note">Den første person er admin og skal kunne logge ind. Gem koden et sikkert sted.</p>
+        <label>Dit navn <input name="admin_name" required autocomplete="username"></label>
+        <div class="row">
+          <label>Kode (mindst 8 tegn) <input type="password" name="admin_password" required minlength="8" autocomplete="new-password"></label>
+          <label>Gentag kode <input type="password" name="admin_password2" required minlength="8" autocomplete="new-password"></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <p class="step">3</p>
+        <h2>Øvrige i husstanden</h2>
+        <p class="note">
+          Valgfrit. Et barn eller en partner, der kun skal indgå i budgettet, skal
+          <strong>ikke</strong> have login. Sæt kun flueben, hvis personen selv skal kunne åbne siden.
+        </p>
+        {% for i in range(1, 4) %}
+        <fieldset class="extra-person">
+          <legend>Person {{ i + 1 }}</legend>
+          <label>Navn <input name="other_name_{{ i }}" placeholder="lad tom hvis I er færdige"></label>
+          <label class="check">
+            <input type="checkbox" name="other_login_{{ i }}" value="1" data-pwd="pwd-{{ i }}">
+            Skal kunne logge ind selv
+          </label>
+          <label class="pwd-field" id="pwd-{{ i }}" hidden>
+            Kode til {{ i + 1 }}
+            <input type="password" name="other_password_{{ i }}" minlength="8" autocomplete="new-password">
+          </label>
+        </fieldset>
+        {% endfor %}
+      </section>
+
+      <button class="btn" type="submit">Opret husstand og log ind</button>
+    </form>
+  </main>
+  <script src="/static/setup.js"></script>
+</body>
+</html>
