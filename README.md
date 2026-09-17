@@ -38,7 +38,6 @@ Valgfrie miljøvariabler:
 | Variabel | Betydning |
 | --- | --- |
 | `API_KEY` | Fast API-nøgle (ellers oprettes en og vises under Indstillinger) |
-| `APP_PASSWORD` | Sætter HTTP basic på UI |
 | `SEED_DEMO` | `true` indlæser eksempelhusstand (standard er tom start + opsætningsguide) |
 | `DATA_DIR` | Standard `/data` i containeren |
 

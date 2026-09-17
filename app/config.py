@@ -8,7 +8,6 @@ class Settings(BaseSettings):
 
     data_dir: Path = Path("./data")
     api_key: str = ""
-    app_password: str = ""
     host: str = "0.0.0.0"
     port: int = 8080
     public_url: str = ""

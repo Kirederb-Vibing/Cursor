@@ -9,7 +9,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select
 
-from app.auth import current_api_key, current_user, is_admin, login_is_required, require_admin, require_ui
+from app.auth import current_api_key, current_user, is_admin, login_is_required, require_admin
 from app.config import settings as env_settings
 from app.crud import create_account, create_person, delete_item, update_item, upsert_item, upsert_mortgage
 from app.database import get_engine
@@ -34,7 +34,7 @@ templates.env.filters["dkk"] = format_dkk
 templates.env.filters["dato"] = format_date
 templates.env.filters["shortdate"] = format_short_date
 
-router = APIRouter(dependencies=[Depends(require_ui)])
+router = APIRouter()
 
 
 def get_session():

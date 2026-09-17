@@ -22,4 +22,4 @@ Testhusstanden indlæses **ikke** automatisk. Første åbning viser opsætningsg
 
 API-nøgle til n8n / Home Assistant sættes under Indstillinger efter login. `API_KEY` i `.env` kan stadig tvinge nøglen.
 
-`APP_PASSWORD` er tom. Person-login styres i opsætningen.
+UI-adgang styres af person-login fra opsætningen. Der er ikke et særskilt app-kodeord.
