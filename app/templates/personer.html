@@ -5,28 +5,51 @@
   <div>
     <p class="eyebrow">Husstand</p>
     <h1>Personer</h1>
-    <p class="lede">Overblikket kan vises samlet eller pr. person. Fælles poster vises hos alle, men tæller kun én gang på husstanden.</p>
+    <p class="lede">
+      Overblikket kan vises samlet eller pr. person. Kode er kun til dem, der selv skal logge ind.
+      Andre kan stadig stå på poster og overførsler.
+    </p>
   </div>
 </section>
 
 <div class="grid-2">
   <section class="card">
     <header><h2>I husstanden</h2></header>
-    <ul class="plain">
+    <ul class="plain people-list">
       {% for person in people %}
-      <li>
+      <li class="person-row">
         <span class="swatch" style="background:{{ person.color }}"></span>
         <div>
           <strong>{{ person.name }}</strong>
-          <span>Årlig brutto {{ person.yearly_gross_ore|dkk }}</span>
+          <span>
+            {% if person.role == 'admin' %}Administrator{% else %}Person{% endif %}
+            · {% if person.can_login %}kan logge ind{% else %}ingen login{% endif %}
+            · brutto {{ person.yearly_gross_ore|dkk }}
+          </span>
+          {% if is_admin %}
+          <form method="post" action="/personer/{{ person.id }}/kode" class="stack tight">
+            <label class="check">
+              <input type="checkbox" name="can_login" value="1" {% if person.can_login %}checked{% endif %} {% if person.role == 'admin' %}disabled{% endif %}>
+              Skal kunne logge ind selv
+              {% if person.role == 'admin' %}<input type="hidden" name="can_login" value="1">{% endif %}
+            </label>
+            <label>Ny kode (lad tom for at beholde)
+              <input type="password" name="password" minlength="8" autocomplete="new-password">
+            </label>
+            <button class="btn ghost" type="submit">Gem adgang</button>
+          </form>
+          {% endif %}
         </div>
+        {% if is_admin %}
         <form method="post" action="/personer/{{ person.id }}/slet" onsubmit="return confirm('Slet personen?');">
           <button class="linkish" type="submit">Fjern</button>
         </form>
+        {% endif %}
       </li>
       {% endfor %}
     </ul>
   </section>
+  {% if is_admin %}
   <section class="card form-card">
     <header><h2>Tilføj person</h2></header>
     <form method="post" action="/personer" class="stack">
@@ -34,8 +57,18 @@
       <label>Farve <input name="color" type="color" value="#0f5c4c"></label>
       <label>Årlig brutto (til groft skattepejlemærke) <input name="yearly_gross" inputmode="decimal"></label>
       <label>Note <input name="notes"></label>
+      <label class="check">
+        <input type="checkbox" name="can_login" value="1" data-pwd="new-pwd">
+        Skal kunne logge ind selv
+      </label>
+      <label class="pwd-field" id="new-pwd" hidden>
+        Kode (mindst 8 tegn)
+        <input type="password" name="password" minlength="8" autocomplete="new-password">
+      </label>
       <button class="btn" type="submit">Tilføj</button>
     </form>
   </section>
+  {% endif %}
 </div>
+<script src="/static/setup.js"></script>
 {% endblock %}

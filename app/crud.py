@@ -7,6 +7,7 @@ from sqlmodel import Session, select
 
 from app.models import Account, HouseholdSettings, Mortgage, Person, RecurringItem
 from app.schemas import AccountIn, ItemIn, MortgageIn, PersonIn, SettingsIn
+from app.security import hash_password
 from app.seed import rotate_api_key
 from app.webhooks import emit_event, item_payload
 
@@ -22,11 +23,20 @@ def _ore(*candidates) -> Optional[int]:
 
 
 def create_person(session: Session, data: PersonIn) -> Person:
+    password_hash = ""
+    can_login = bool(data.can_login)
+    if can_login and data.password:
+        password_hash = hash_password(data.password)
+    elif can_login and not data.password:
+        raise ValueError("Personer der skal logge ind, skal have en kode")
     person = Person(
         name=data.name.strip(),
         color=data.color or "#0f5c4c",
         notes=data.notes or "",
         yearly_gross_ore=_ore(data.yearly_gross_ore, data.yearly_gross_dkk) or 0,
+        role=data.role if data.role in {"admin", "member"} else "member",
+        can_login=can_login,
+        password_hash=password_hash,
     )
     session.add(person)
     session.commit()

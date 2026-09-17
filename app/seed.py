@@ -268,5 +268,6 @@ def seed_demo(session: Session, *, force: bool = False) -> None:
     settings.name = "Familien"
     settings.is_couple = True
     settings.seeded = True
+    settings.onboarded = True
     session.add(settings)
     session.commit()

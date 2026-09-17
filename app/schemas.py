@@ -12,6 +12,9 @@ class PersonIn(BaseModel):
     notes: str = ""
     yearly_gross_dkk: Optional[float] = None
     yearly_gross_ore: Optional[int] = None
+    role: str = "member"
+    can_login: bool = False
+    password: Optional[str] = None
     external_id: str = ""
 
 
