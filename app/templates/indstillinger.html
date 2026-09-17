@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Indstillinger · Fælleskassen{% endblock %}
+{% block body %}
+<section class="hero compact">
+  <div>
+    <p class="eyebrow">Integration</p>
+    <h1>Husstand, skat og nøgler</h1>
+  </div>
+</section>
+
+<section class="card form-card">
+  <form method="post" action="/indstillinger" class="stack">
+    <label>Husstandens navn <input name="name" value="{{ settings.name }}" required></label>
+    <label class="check">
+      <input type="checkbox" name="is_couple" value="1" {% if settings.is_couple %}checked{% endif %}>
+      Par / ægtefæller (100.000 kr. loft for højt rentefradrag)
+    </label>
+    <div class="row">
+      <label>Kommuneskat % <input name="municipal_tax_pct" value="{{ settings.municipal_tax_pct }}"></label>
+      <label>Kirkeskat % (0 hvis nej) <input name="church_tax_pct" value="{{ settings.church_tax_pct }}"></label>
+    </div>
+    <label>
+      n8n webhook-URL (udgående events ved opret/ret/slet)
+      <input name="n8n_webhook_url" value="{{ settings.n8n_webhook_url }}" placeholder="https://n8n.example/webhook/faelleskassen">
+    </label>
+    <button class="btn" type="submit">Gem indstillinger</button>
+  </form>
+</section>
+
+<section class="card">
+  <header><h2>API-nøgle til n8n og Home Assistant</h2></header>
+  <p>Send den som <code>X-API-Key</code> eller <code>Authorization: Bearer</code>. Kalenderen kan også bruge <code>?api_key=</code>.</p>
+  <pre class="key">{{ effective_api_key }}</pre>
+  {% if api_key_from_env %}
+  <p class="note">Nøglen kommer fra miljøvariablen <code>API_KEY</code> og overstyrer den i databasen.</p>
+  {% else %}
+  <form method="post" action="/indstillinger/nogle">
+    <button class="btn ghost" type="submit">Rotér nøgle</button>
+  </form>
+  {% endif %}
+  <p class="note">OpenAPI: <a href="/docs">/docs</a> · HA-sensorer: <code>/api/v1/ha/sensors</code> · ICS: <code>/api/v1/ha/calendar.ics</code></p>
+</section>
+
+<section class="card">
+  <header><h2>Eksempeldata</h2></header>
+  <p>Indlæs en lille husstand med løn, overførsler, abonnementer og et huslån. Overskriver eksisterende poster.</p>
+  <form method="post" action="/indstillinger/demo" onsubmit="return confirm('Overskriv data med eksempelhusstand?');">
+    <button class="btn ghost" type="submit">Indlæs demo</button>
+  </form>
+</section>
+{% endblock %}

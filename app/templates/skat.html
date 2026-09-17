@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Skat · Fælleskassen{% endblock %}
+{% block body %}
+<section class="hero compact">
+  <div>
+    <p class="eyebrow">Skatteår {{ plan.tax.year }}</p>
+    <h1>Huslån og marts-udbetaling</h1>
+    <p class="lede">
+      Estimat af rentefradragets skatteværdi, og hvad der typisk lander ved årsopgørelsen i {{ plan.tax.payout_label }}.
+      Indtast renter allerede sat i forskud, hvis fordelen allerede kommer i lønnen.
+    </p>
+  </div>
+  <article class="kpi-inline">
+    <span>Samlet estimat {{ plan.tax.payout_label }}</span>
+    <strong>{{ plan.tax.total_payout_ore|dkk }}</strong>
+  </article>
+</section>
+
+{% for row in plan.tax.estimates %}
+<section class="card">
+  <header>
+    <h2>{{ row.mortgage.name }}</h2>
+    <form method="post" action="/skat/laan/{{ row.mortgage.id }}/slet" onsubmit="return confirm('Slet lånet?');">
+      <button class="linkish" type="submit">Fjern</button>
+    </form>
+  </header>
+  <dl class="facts">
+    <div><dt>Estimeret rente + bidrag</dt><dd>{{ row.estimate.annual_interest_ore|dkk }}</dd></div>
+    <div><dt>Skatteværdi af rentefradrag</dt><dd>{{ row.estimate.rentefradrag_value_ore|dkk }}</dd></div>
+    <div><dt>Allerede i forskud (værdi)</dt><dd>{{ row.estimate.forskud_value_ore|dkk }}</dd></div>
+    <div><dt>Ejendomsværdiskat (årligt, forenklet)</dt><dd>{{ row.estimate.property_tax_ore|dkk }}</dd></div>
+    <div><dt>Estimeret {{ row.estimate.payout_month }}</dt><dd>{{ row.estimate.estimated_march_payout_ore|dkk }}</dd></div>
+    <div><dt>Satser</dt><dd>{{ '%.2f'|format(row.estimate.low_rate_pct) }} % op til {{ row.estimate.low_threshold_ore|dkk }}, derefter {{ '%.2f'|format(row.estimate.high_rate_pct) }} %</dd></div>
+  </dl>
+  <p class="note">{{ row.estimate.disclaimer }}</p>
+</section>
+{% endfor %}
+
+<section class="card form-card">
+  <header><h2>{% if mortgages %}Opdater eller tilføj lån{% else %}Indtast huslån{% endif %}</h2></header>
+  <form method="post" action="/skat/laan" class="stack">
+    {% if mortgages %}
+    <label>Eksisterende lån
+      <select name="mortgage_id">
+        <option value="">Nyt lån</option>
+        {% for m in mortgages %}
+        <option value="{{ m.id }}">{{ m.name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    {% endif %}
+    <label>Navn <input name="name" value="Realkredit bolig" required></label>
+    <div class="row">
+      <label>Restgæld <input name="remaining_principal" required placeholder="2480000"></label>
+      <label>Rente % <input name="interest_rate_pct" required placeholder="3.85"></label>
+      <label>Bidrag % <input name="contribution_rate_pct" placeholder="0.55"></label>
+    </div>
+    <div class="row">
+      <label>Årlig renteudgift (valgfri override) <input name="annual_interest_override" placeholder="lad tom for restgæld × (rente+bidrag)"></label>
+      <label>Renteudgift allerede i forskud <input name="forskud_interest" value="0"></label>
+      <label>Offentlig ejendomsværdi (valgfri) <input name="property_value"></label>
+    </div>
+    <button class="btn" type="submit">Beregn og gem</button>
+  </form>
+</section>
+
+{% if incomes %}
+<section class="card">
+  <header><h2>Grov indkomstskat (pejlemærke)</h2></header>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Person</th><th>Brutto</th><th>AM</th><th>Samlet skat</th><th>Netto</th></tr>
+      </thead>
+      <tbody>
+        {% for person, tax in incomes %}
+        <tr>
+          <td>{{ person.name }}</td>
+          <td>{{ tax.gross_ore|dkk }}</td>
+          <td>{{ tax.am_ore|dkk }}</td>
+          <td>{{ tax.total_tax_ore|dkk }}</td>
+          <td>{{ tax.net_ore|dkk }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

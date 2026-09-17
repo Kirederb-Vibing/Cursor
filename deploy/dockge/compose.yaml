@@ -1,0 +1,39 @@
+# Fælleskassen — Dockge-stack (GHCR-image)
+#
+# 1. Ny stack i Dockge, navn: faelleskassen
+# 2. Indsæt denne fil som compose
+# 3. Indsæt .env i Env-fanen
+# 4. Deploy (trækker ghcr.io/kirederb-vibing/cursor:latest)
+
+services:
+  faelleskassen:
+    container_name: faelleskassen
+    image: ${IMAGE:-ghcr.io/kirederb-vibing/cursor:latest}
+    pull_policy: always
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      DATA_DIR: /data
+      TZ: ${TZ:-Europe/Copenhagen}
+      API_KEY: ${API_KEY}
+      APP_PASSWORD: ${APP_PASSWORD:-}
+      SEED_DEMO: ${SEED_DEMO:-true}
+      PUBLIC_URL: ${PUBLIC_URL:-http://localhost:8080}
+    volumes:
+      - data:/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health')",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  data:

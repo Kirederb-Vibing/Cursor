@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Konti · Fælleskassen{% endblock %}
+{% block body %}
+<section class="hero compact">
+  <div>
+    <p class="eyebrow">Interne spande</p>
+    <h1>Konti</h1>
+    <p class="lede">Bruges til interne overførsler og til at se, hvor planlagte hævninger lander.</p>
+  </div>
+</section>
+<div class="grid-2">
+  <section class="card">
+    <ul class="plain">
+      {% for account in accounts %}
+      <li>
+        <div>
+          <strong>{{ account.name }}</strong>
+          <span>{{ account.kind }} · start {{ account.opening_balance_ore|dkk }}</span>
+        </div>
+        <form method="post" action="/konti/{{ account.id }}/slet" onsubmit="return confirm('Slet kontoen?');">
+          <button class="linkish" type="submit">Fjern</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  <section class="card form-card">
+    <header><h2>Ny konto</h2></header>
+    <form method="post" action="/konti" class="stack">
+      <label>Navn <input name="name" required></label>
+      <label>Type
+        <select name="kind">
+          <option value="checking">Løn / daglig</option>
+          <option value="shared">Fælles</option>
+          <option value="savings">Opsparing</option>
+          <option value="buffer">Buffer</option>
+          <option value="other">Andet</option>
+        </select>
+      </label>
+      <label>Startsaldo <input name="opening_balance" value="0"></label>
+      <button class="btn" type="submit">Tilføj</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

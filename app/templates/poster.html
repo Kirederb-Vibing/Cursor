@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Poster · Fælleskassen{% endblock %}
+{% block body %}
+<section class="hero compact">
+  <div>
+    <p class="eyebrow">Planlægning</p>
+    <h1>Indkomster, abonnementer og overførsler</h1>
+    <p class="lede">Hver post kører videre på sin kadence, indtil du piller den ud. Tom slutdato betyder: uden udløb.</p>
+  </div>
+  <div class="actions">
+    <a class="btn" href="/poster/ny?kind=expense">Nyt abonnement</a>
+    <a class="btn ghost" href="/poster/ny?kind=income">Ny indkomst</a>
+    <a class="btn ghost" href="/poster/ny?kind=internal_transfer">Intern overførsel</a>
+  </div>
+</section>
+
+<div class="filters">
+  <a href="/poster" class="{% if not filter_kind %}on{% endif %}">Alle</a>
+  <a href="/poster?kind=income" class="{% if filter_kind == 'income' %}on{% endif %}">Indkomst</a>
+  <a href="/poster?kind=expense" class="{% if filter_kind == 'expense' %}on{% endif %}">Abonnementer</a>
+  <a href="/poster?kind=internal_transfer" class="{% if filter_kind == 'internal_transfer' %}on{% endif %}">Interne</a>
+  <a href="/poster?kind=external_transfer" class="{% if filter_kind == 'external_transfer' %}on{% endif %}">Eksterne</a>
+</div>
+
+<section class="card">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Navn</th>
+          <th>Type</th>
+          <th>Beløb</th>
+          <th>Kadence</th>
+          <th>Hæves</th>
+          <th>Person</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr class="{% if not item.active %}dim{% endif %}">
+          <td>
+            <a href="/poster/{{ item.id }}">{{ item.name }}</a>
+            {% if not item.ends_on %}<small class="tag">kører</small>{% endif %}
+            {% if not item.active %}<small class="tag warn">pause</small>{% endif %}
+          </td>
+          <td>{{ kind_labels.get(item.kind, item.kind) }}</td>
+          <td>{{ item.amount_ore|dkk }}</td>
+          <td>{{ cadence_labels.get(item.cadence, item.cadence) }}</td>
+          <td>
+            {% if item.charge_rule == 'first' %}Første i måneden
+            {% elif item.charge_rule == 'last' %}Sidste i måneden
+            {% else %}d. {{ item.charge_day }}{% endif %}
+            {% if item.cadence != 'monthly' %} · startmåned {{ months[item.anchor_month] }}{% endif %}
+          </td>
+          <td>{% if item.person_id and item.person_id in people %}{{ people[item.person_id].name }}{% else %}Husstand{% endif %}</td>
+          <td class="right">
+            <form method="post" action="/poster/{{ item.id }}/slet" onsubmit="return confirm('Fjern posten helt fra planlægningen?');">
+              <button class="linkish" type="submit">Fjern</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
