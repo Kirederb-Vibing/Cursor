@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import PlainTextResponse
 from sqlmodel import Session, select
 
-from app.auth import require_api_key
+from app.auth import current_api_key, require_api_key
 from app.crud import (
     create_account,
     create_person,
@@ -388,7 +388,7 @@ def get_settings_api(session: Session = Depends(get_session)):
         "municipal_tax_pct": settings.municipal_tax_pct,
         "church_tax_pct": settings.church_tax_pct,
         "n8n_webhook_url": settings.n8n_webhook_url,
-        "api_key": settings.api_key,
+        "api_key": current_api_key(),
     }
 
 
@@ -401,5 +401,5 @@ def patch_settings(data: SettingsIn, session: Session = Depends(get_session)):
         "municipal_tax_pct": settings.municipal_tax_pct,
         "church_tax_pct": settings.church_tax_pct,
         "n8n_webhook_url": settings.n8n_webhook_url,
-        "api_key": settings.api_key,
+        "api_key": current_api_key(),
     }

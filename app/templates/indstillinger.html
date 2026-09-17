@@ -30,10 +30,14 @@
 <section class="card">
   <header><h2>API-nøgle til n8n og Home Assistant</h2></header>
   <p>Send den som <code>X-API-Key</code> eller <code>Authorization: Bearer</code>. Kalenderen kan også bruge <code>?api_key=</code>.</p>
-  <pre class="key">{{ settings.api_key }}</pre>
+  <pre class="key">{{ effective_api_key }}</pre>
+  {% if api_key_from_env %}
+  <p class="note">Nøglen kommer fra miljøvariablen <code>API_KEY</code> og overstyrer den i databasen.</p>
+  {% else %}
   <form method="post" action="/indstillinger/nogle">
     <button class="btn ghost" type="submit">Rotér nøgle</button>
   </form>
+  {% endif %}
   <p class="note">OpenAPI: <a href="/docs">/docs</a> · HA-sensorer: <code>/api/v1/ha/sensors</code> · ICS: <code>/api/v1/ha/calendar.ics</code></p>
 </section>
 

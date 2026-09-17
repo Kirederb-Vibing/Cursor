@@ -9,7 +9,8 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select
 
-from app.auth import require_ui
+from app.auth import current_api_key, require_ui
+from app.config import settings as env_settings
 from app.crud import create_account, create_person, delete_item, update_item, upsert_item, upsert_mortgage
 from app.database import get_engine
 from app.formatting import (
@@ -52,6 +53,8 @@ def ctx(request: Request, session: Session, **extra):
         "cadence_labels": CADENCE_DA,
         "charge_labels": CHARGE_RULE_DA,
         "months": MONTHS_DA,
+        "effective_api_key": current_api_key(),
+        "api_key_from_env": bool(env_settings.api_key),
     }
     payload.update(extra)
     return payload
