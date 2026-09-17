@@ -8,5 +8,6 @@ htmlcov/
 data/
 *.db
 .env
+!deploy/dockge/.env
 .DS_Store
 .ruff_cache/

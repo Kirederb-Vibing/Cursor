@@ -16,6 +16,10 @@ docker compose up --build
 
 Åbn [http://localhost:8080](http://localhost:8080).
 
+### Dockge
+
+Kopiér [`deploy/dockge/compose.yaml`](deploy/dockge/compose.yaml) og [`deploy/dockge/.env`](deploy/dockge/.env) ind i en ny stack. Se [`deploy/dockge/README.md`](deploy/dockge/README.md).
+
 ### Image fra GitHub
 
 Hvert push til `main` (og tags `v*`) bygger og lægger et image i GitHub Container Registry. CI kører tests først.
