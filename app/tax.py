@@ -122,9 +122,9 @@ def march_payout_estimate(
         is_couple=is_couple,
     )
     evs = property_value_tax(property_value_ore)
-    # Hvis rentefradraget allerede sidder i forskud, udbetales forskellen i marts.
-    # Evt. ejendomsværdiskat trækker den anden vej, hvis den ikke er indregnet.
-    payout = rentefradrag - forskud_value - evs
+    # Marts-udbetalingen her er forskellen på rentefradragets skatteværdi og det,
+    # der allerede er indregnet i forskud. Ejendomsværdiskat vises separat.
+    payout = rentefradrag - forskud_value
     return MortgageMarchEstimate(
         tax_year=tax_year,
         payout_month=f"marts {tax_year + 1}",

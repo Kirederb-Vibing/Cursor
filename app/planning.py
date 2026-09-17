@@ -105,7 +105,7 @@ def build_plan(
     person_id: int | None = None,
 ) -> dict:
     today = today or date.today()
-    start = today
+    month_start = today.replace(day=1)
     end_year, end_month = add_months(today.year, today.month, months - 1)
     from calendar import monthrange
 
@@ -113,7 +113,7 @@ def build_plan(
     items = session.exec(select(RecurringItem)).all()
     if person_id is not None:
         items = [item for item in items if item.person_id == person_id or item.person_id is None]
-    occurrences = collect_occurrences(items, start, window_end)
+    occurrences = collect_occurrences(items, month_start, window_end)
     buckets = _empty_months(today, months)
     for occ in occurrences:
         bucket = buckets.get((occ.date.year, occ.date.month))

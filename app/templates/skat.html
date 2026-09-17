@@ -28,7 +28,7 @@
     <div><dt>Estimeret rente + bidrag</dt><dd>{{ row.estimate.annual_interest_ore|dkk }}</dd></div>
     <div><dt>Skatteværdi af rentefradrag</dt><dd>{{ row.estimate.rentefradrag_value_ore|dkk }}</dd></div>
     <div><dt>Allerede i forskud (værdi)</dt><dd>{{ row.estimate.forskud_value_ore|dkk }}</dd></div>
-    <div><dt>Ejendomsværdiskat (forenklet)</dt><dd>{{ row.estimate.property_tax_ore|dkk }}</dd></div>
+    <div><dt>Ejendomsværdiskat (årligt, forenklet)</dt><dd>{{ row.estimate.property_tax_ore|dkk }}</dd></div>
     <div><dt>Estimeret {{ row.estimate.payout_month }}</dt><dd>{{ row.estimate.estimated_march_payout_ore|dkk }}</dd></div>
     <div><dt>Satser</dt><dd>{{ '%.2f'|format(row.estimate.low_rate_pct) }} % op til {{ row.estimate.low_threshold_ore|dkk }}, derefter {{ '%.2f'|format(row.estimate.high_rate_pct) }} %</dd></div>
   </dl>

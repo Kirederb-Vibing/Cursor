@@ -38,6 +38,7 @@ def test_demo_seed_and_overview(client):
     overview = client.get("/api/v1/overview", headers=auth()).json()
     assert overview["household"] == "Familien"
     assert len(overview["months"]) == 12
+    assert overview["months"][0]["income_dkk"] == 70000
     assert overview["this_month_net_ore"] != 0
     sensors = client.get("/api/v1/ha/sensors", headers=auth()).json()
     assert "naeste_maaned_netto" in sensors
