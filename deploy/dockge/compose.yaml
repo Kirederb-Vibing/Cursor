@@ -1,22 +1,15 @@
-# Fælleskassen — Dockge-stack
+# Fælleskassen — Dockge-stack (GHCR-image)
 #
 # 1. Ny stack i Dockge, navn: faelleskassen
 # 2. Indsæt denne fil som compose
 # 3. Indsæt .env i Env-fanen
-# 4. Deploy
-#
-# Branchen er ikke merged til main endnu, så stacken bygger image
-# direkte fra GitHub. Når latest ligger i GHCR, kan du skifte til
-# image: ghcr.io/kirederb-vibing/cursor:latest og fjerne build.
+# 4. Deploy (trækker ghcr.io/kirederb-vibing/cursor:latest)
 
 services:
   faelleskassen:
     container_name: faelleskassen
-    image: faelleskassen:test
-    pull_policy: build
-    build:
-      context: https://github.com/Kirederb-Vibing/Cursor.git#cursor/oekonomi-planlaegning-800c
-      dockerfile: Dockerfile
+    image: ${IMAGE:-ghcr.io/kirederb-vibing/cursor:latest}
+    pull_policy: always
     restart: unless-stopped
     ports:
       - "${PORT:-8080}:8080"

@@ -18,7 +18,7 @@ docker compose up --build
 
 ### Dockge
 
-Kopiér [`deploy/dockge/compose.yaml`](deploy/dockge/compose.yaml) og [`deploy/dockge/.env`](deploy/dockge/.env) ind i en ny stack. Se [`deploy/dockge/README.md`](deploy/dockge/README.md).
+Kopiér [`deploy/dockge/compose.yaml`](deploy/dockge/compose.yaml) og [`deploy/dockge/.env`](deploy/dockge/.env) ind i en ny stack. Se [`deploy/dockge/README.md`](deploy/dockge/README.md). Stacken trækker `ghcr.io/kirederb-vibing/cursor:latest`.
 
 ### Image fra GitHub
 

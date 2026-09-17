@@ -1,14 +1,14 @@
 services:
   faelleskassen:
-    image: ghcr.io/kirederb-vibing/cursor:latest
+    image: ${IMAGE:-ghcr.io/kirederb-vibing/cursor:latest}
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "${PORT:-8080}:8080"
     environment:
       DATA_DIR: /data
-      # Valgfrit: tving API-nøgle og grundlæggende UI-kodeord
+      TZ: ${TZ:-Europe/Copenhagen}
       API_KEY: ${API_KEY:-}
       APP_PASSWORD: ${APP_PASSWORD:-}
       SEED_DEMO: ${SEED_DEMO:-true}
