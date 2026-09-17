@@ -1,0 +1,21 @@
+services:
+  faelleskassen:
+    image: ghcr.io/kirederb-vibing/cursor:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DATA_DIR: /data
+      # Valgfrit: tving API-nøgle og grundlæggende UI-kodeord
+      API_KEY: ${API_KEY:-}
+      APP_PASSWORD: ${APP_PASSWORD:-}
+      SEED_DEMO: ${SEED_DEMO:-true}
+      PUBLIC_URL: ${PUBLIC_URL:-http://localhost:8080}
+    volumes:
+      - faelleskassen-data:/data
+    restart: unless-stopped
+
+volumes:
+  faelleskassen-data:

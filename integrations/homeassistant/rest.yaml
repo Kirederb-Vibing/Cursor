@@ -1,0 +1,44 @@
+# Home Assistant — REST-sensorer til Fælleskassen
+#
+# 1. Gem API-nøglen i secrets.yaml:
+#    faelleskassen_api_key: "...."
+#    faelleskassen_url: "http://faelleskassen:8080"
+#
+# 2. Tilføj denne fil som en package, eller kopiér ind i configuration.yaml.
+
+rest:
+  - resource: http://faelleskassen:8080/api/v1/ha/sensors
+    method: GET
+    scan_interval: 300
+    headers:
+      X-API-Key: !secret faelleskassen_api_key
+    timeout: 15
+    sensor:
+      - name: "Økonomi denne måned netto"
+        value_template: "{{ value_json.denne_maaned_netto }}"
+        unit_of_measurement: "DKK"
+        device_class: monetary
+        json_attributes_path: "$"
+        json_attributes:
+          - markdown
+          - marts_label
+      - name: "Økonomi næste måned netto"
+        value_template: "{{ value_json.naeste_maaned_netto }}"
+        unit_of_measurement: "DKK"
+        device_class: monetary
+      - name: "Estimeret marts-udbetaling"
+        value_template: "{{ value_json.forventet_marts_udbetaling }}"
+        unit_of_measurement: "DKK"
+        device_class: monetary
+      - name: "Næste overførsel"
+        value_template: "{{ value_json.naeste_overfoersel_navn }}"
+      - name: "Næste overførsel beløb"
+        value_template: "{{ value_json.naeste_overfoersel_beloeb }}"
+        unit_of_measurement: "DKK"
+        device_class: monetary
+      - name: "Næste abonnement"
+        value_template: "{{ value_json.naeste_abonnement_navn }}"
+
+# Endpoint ovenfor skal pege på /api/v1/ha/sensors
+# Hvis !secret ikke kan sættes på resource, brug:
+# resource: http://IP:8080/api/v1/ha/sensors

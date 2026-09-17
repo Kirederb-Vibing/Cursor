@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Personer · Fælleskassen{% endblock %}
+{% block body %}
+<section class="hero compact">
+  <div>
+    <p class="eyebrow">Husstand</p>
+    <h1>Personer</h1>
+    <p class="lede">Overblikket kan vises samlet eller pr. person. Fælles poster vises hos alle, men tæller kun én gang på husstanden.</p>
+  </div>
+</section>
+
+<div class="grid-2">
+  <section class="card">
+    <header><h2>I husstanden</h2></header>
+    <ul class="plain">
+      {% for person in people %}
+      <li>
+        <span class="swatch" style="background:{{ person.color }}"></span>
+        <div>
+          <strong>{{ person.name }}</strong>
+          <span>Årlig brutto {{ person.yearly_gross_ore|dkk }}</span>
+        </div>
+        <form method="post" action="/personer/{{ person.id }}/slet" onsubmit="return confirm('Slet personen?');">
+          <button class="linkish" type="submit">Fjern</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  <section class="card form-card">
+    <header><h2>Tilføj person</h2></header>
+    <form method="post" action="/personer" class="stack">
+      <label>Navn <input name="name" required></label>
+      <label>Farve <input name="color" type="color" value="#0f5c4c"></label>
+      <label>Årlig brutto (til groft skattepejlemærke) <input name="yearly_gross" inputmode="decimal"></label>
+      <label>Note <input name="notes"></label>
+      <button class="btn" type="submit">Tilføj</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

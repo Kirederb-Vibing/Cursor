@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block title %}Overblik · Fælleskassen{% endblock %}
+{% block body %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">{% if selected_person %}{{ selected_person.name }}{% else %}Husstand{% endif %}</p>
+    <h1>Hvad der forventes at ske</h1>
+    <p class="lede">
+      Faste indkomster, abonnementer og overførsler lægges frem, indtil du fjerner dem.
+      Marts-tallet er et estimat af rentefradrag ved lukning af skatteåret {{ plan.tax.year }}.
+    </p>
+  </div>
+  <div class="person-switch">
+    <a href="/" class="{% if not selected_person %}on{% endif %}">Hele husstanden</a>
+    {% for person in nav_people %}
+      <a href="/?person_id={{ person.id }}" class="{% if selected_person and selected_person.id == person.id %}on{% endif %}">{{ person.name }}</a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="kpis">
+  <article>
+    <span>Denne måned netto</span>
+    <strong class="{{ 'neg' if (plan.this_month.net_ore if plan.this_month else 0) < 0 else 'pos' }}">
+      {{ (plan.this_month.net_ore if plan.this_month else 0)|dkk }}
+    </strong>
+    <small>Indkomst minus udgifter og eksterne overførsler</small>
+  </article>
+  <article>
+    <span>Næste måned netto</span>
+    <strong class="{{ 'neg' if (plan.next_month.net_ore if plan.next_month else 0) < 0 else 'pos' }}">
+      {{ (plan.next_month.net_ore if plan.next_month else 0)|dkk }}
+    </strong>
+    <small>{{ plan.next_month.label if plan.next_month else "" }}</small>
+  </article>
+  <article>
+    <span>Estimeret udbetaling {{ plan.tax.payout_label }}</span>
+    <strong>{{ plan.tax.total_payout_ore|dkk }}</strong>
+    <small>Rentefradrag minus forskud og evt. ejendomsværdiskat</small>
+  </article>
+  <article>
+    <span>Næste overførsel</span>
+    {% if plan.upcoming_transfers %}
+      <strong>{{ plan.upcoming_transfers[0].amount_ore|dkk }}</strong>
+      <small>{{ plan.upcoming_transfers[0].name }} · {{ plan.upcoming_transfers[0].date|dato }}</small>
+    {% else %}
+      <strong>—</strong>
+      <small>Ingen planlagte overførsler</small>
+    {% endif %}
+  </article>
+</section>
+
+<div class="grid-2">
+  <section class="card">
+    <header>
+      <h2>Forventes overført</h2>
+      <a href="/poster?kind=internal_transfer">Rediger</a>
+    </header>
+    {% if plan.upcoming_transfers %}
+    <ul class="timeline">
+      {% for occ in plan.upcoming_transfers %}
+      <li>
+        <time>{{ occ.date|shortdate }}</time>
+        <div>
+          <strong>{{ occ.name }}</strong>
+          <span>
+            {% if occ.kind == 'internal_transfer' %}Intern{% else %}Ekstern{% endif %}
+            {% if occ.from_account_id and occ.from_account_id in plan.account_map %}
+              · {{ plan.account_map[occ.from_account_id].name }}
+            {% endif %}
+            {% if occ.to_account_id and occ.to_account_id in plan.account_map %}
+              → {{ plan.account_map[occ.to_account_id].name }}
+            {% endif %}
+          </span>
+        </div>
+        <em>{{ occ.amount_ore|dkk }}</em>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty">Ingen faste overførsler i horisonten.</p>
+    {% endif %}
+  </section>
+
+  <section class="card">
+    <header>
+      <h2>Næste hævninger</h2>
+      <a href="/poster">Alle poster</a>
+    </header>
+    <ul class="timeline">
+      {% for occ in plan.upcoming_charges[:10] %}
+      <li>
+        <time>{{ occ.date|shortdate }}</time>
+        <div>
+          <strong>{{ occ.name }}</strong>
+          <span>{{ kind_labels.get(occ.kind, occ.kind) }}{% if occ.person_id and occ.person_id in plan.person_map %} · {{ plan.person_map[occ.person_id].name }}{% endif %}</span>
+        </div>
+        <em class="{{ 'pos' if occ.signed_ore > 0 else '' }}">{{ occ.amount_ore|dkk }}</em>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+
+<section class="card">
+  <header>
+    <h2>12 måneder</h2>
+    <span>Abonnementer fortsætter automatisk, indtil de slettes</span>
+  </header>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Måned</th>
+          <th>Indkomst</th>
+          <th>Udgifter</th>
+          <th>Eksterne</th>
+          <th>Interne flyt</th>
+          <th>Netto</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for month in plan.months %}
+        <tr>
+          <td>{{ month.label }}</td>
+          <td>{{ month.income_ore|dkk }}</td>
+          <td>{{ month.expense_ore|dkk }}</td>
+          <td>{{ month.external_ore|dkk }}</td>
+          <td>{{ month.internal_ore|dkk }}</td>
+          <td class="{{ 'neg' if month.net_ore < 0 else 'pos' }}">{{ month.net_ore|dkk }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <header>
+    <h2>Konti efter planlagte bevægelser</h2>
+    <a href="/konti">Saldi</a>
+  </header>
+  <div class="pills">
+    {% for row in plan.balances %}
+    <article>
+      <span>{{ row.account.name }}</span>
+      <strong>{{ row.projected_ore|dkk }}</strong>
+      <small>Start {{ row.opening_ore|dkk }}</small>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

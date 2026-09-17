@@ -1,0 +1,25 @@
+# Lovelace-udsnit. Kræver REST-sensorerne fra rest.yaml.
+
+type: vertical-stack
+cards:
+  - type: markdown
+    content: >
+      ## Husstandsøkonomi
+
+      {{ state_attr('sensor.okonomi_denne_maaned_netto', 'markdown') }}
+  - type: entities
+    entities:
+      - sensor.okonomi_denne_maaned_netto
+      - sensor.okonomi_naeste_maaned_netto
+      - sensor.estimeret_marts_udbetaling
+      - sensor.naeste_overfoersel
+      - sensor.naeste_overfoersel_beloeb
+      - sensor.naeste_abonnement
+  - type: glance
+    entities:
+      - entity: sensor.okonomi_denne_maaned_netto
+        name: Denne måned
+      - entity: sensor.okonomi_naeste_maaned_netto
+        name: Næste måned
+      - entity: sensor.estimeret_marts_udbetaling
+        name: Marts

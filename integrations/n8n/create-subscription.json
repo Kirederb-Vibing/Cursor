@@ -1,0 +1,53 @@
+{
+  "name": "Fælleskassen — opret abonnement",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://faelleskassen:8080/api/v1/subscriptions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "SKIFT_TIL_DIN_NOGLE"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"Nyt abonnement\",\n  \"amount_dkk\": 99,\n  \"cadence\": \"monthly\",\n  \"charge_rule\": \"day_of_month\",\n  \"charge_day\": 14,\n  \"starts_on\": \"{{$now.toFormat('yyyy-MM-dd')}}\",\n  \"category\": \"abonnement\",\n  \"external_id\": \"n8n-{{$now.toMillis()}}\"\n}",
+        "options": {}
+      },
+      "id": "http-create",
+      "name": "Opret abonnement",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [280, 0]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Opret abonnement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "1"
+}
