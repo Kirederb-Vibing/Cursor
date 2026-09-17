@@ -73,6 +73,9 @@ def test_n8n_can_create_subscription_with_external_id(client):
 def test_settings_returns_env_api_key(client):
     data = client.get("/api/v1/settings", headers=auth()).json()
     assert data["api_key"] == "test-key"
+
+
+def test_ui_pages_render(client):
     for path in ("/", "/poster", "/personer", "/konti", "/skat", "/indstillinger"):
         response = client.get(path)
         assert response.status_code == 200, path
